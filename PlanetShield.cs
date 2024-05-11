@@ -54,8 +54,6 @@ namespace noya
         {
             try
             {
-	//if(info.Type.ToString() == "Grind") return;
-
                 IMySlimBlock block = target as IMySlimBlock;
                 long id = 0L;
 
@@ -68,10 +66,16 @@ namespace noya
                 long attackerId = info.AttackerId;
                 IMyEntity attacker;
                 MyAPIGateway.Entities.TryGetEntityById(attackerId, out attacker);
+
                 if (attacker is IMyHandheldGunObject<MyGunBase>)
                 {
-                    attackerId = (attacker as IMyHandheldGunObject<MyGunBase>).OwnerId;
+                    attackerId = (attacker as IMyHandheldGunObject<MyGunBase>).OwnerIdentityId;
+                } else if (attacker is IMyHandheldGunObject<MyToolBase>)
+                {
+                    attackerId = (attacker as IMyHandheldGunObject<MyToolBase>).OwnerIdentityId;
                 }
+
+                // MyAPIGateway.Utilities.ShowNotification("Detected a player being attacked with Steam ID: " + MyAPIGateway.Multiplayer.Players.TryGetSteamId(id), 2000, MyFontEnum.Green);
 
                 if (id == 0L || MyAPIGateway.Multiplayer.Players.TryGetSteamId(id) == 0UL || id == attackerId)
                 {
